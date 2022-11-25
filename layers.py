@@ -1,5 +1,8 @@
-from tensorflow.keras.layers import Add, Dense, Dropout, MultiHeadAttention, LayerNormalization, Layer
+from tensorflow.keras.layers import Add, Dense, Conv1D, Dropout, MultiHeadAttention, LayerNormalization, Layer
 from tensorflow.keras.initializers import TruncatedNormal
+import pdb
+import tensorflow as tf
+
 class PositionalEmbedding(Layer):
     def __init__(self, units, dropout_rate, **kwargs):
         super(PositionalEmbedding, self).__init__(**kwargs)
@@ -26,13 +29,15 @@ class PositionalEmbedding(Layer):
         return self.dropout(x, training=training)
 
 
+
 class Encoder(Layer):
     def __init__(
         self, embed_dim, mlp_dim, num_heads, dropout_rate,
         attention_dropout_rate, **kwargs
     ):
         super(Encoder, self).__init__(**kwargs)
-        
+        #embed_dim = 128, 
+        #mlp_dim = 256
         self.mha = MultiHeadAttention(
             num_heads = num_heads,
             key_dim = embed_dim,
@@ -40,27 +45,31 @@ class Encoder(Layer):
             kernel_initializer = TruncatedNormal(stddev = 0.02)
         )
 
-        self. dense_0 = Dense(
-            units = mlp_dim, 
-            activation = "gelu", 
-            kernel_initializer = TruncatedNormal(stddev = 0.02)
-        )
+        # self. dense_0 = Dense(
+        #     units = mlp_dim, 
+        #     activation = "gelu", 
+        #     kernel_initializer = TruncatedNormal(stddev = 0.02)
+        # )
 
-        self.dense_1 = Dense(
-            units = embed_dim, 
-            kernel_initializer = TruncatedNormal(stddev = 0.02)
-        )
+        # self.dense_1 = Dense(
+        #     units = embed_dim, 
+        #     kernel_initializer = TruncatedNormal(stddev = 0.02)
+        # )
+
+        self.conv_0 = Conv1D(filters = 4 , kernel_size = 1, activation = 'relu')
+        self.conv_1 = Conv1D(filters  = 128, kernel_size = 1)
 
         self.dropout_0 = Dropout(rate = dropout_rate)
         self.dropout_1 = Dropout(rate = dropout_rate)
 
-        self.norm_0 = LayerNormalization(epsilon = 1e-5)
-        self.norm_1 = LayerNormalization(epsilon = 1e-5)
+        self.norm_0 = LayerNormalization(epsilon = 1e-6)
+        self.norm_1 = LayerNormalization(epsilon = 1e-6)
 
         self.add_0 = Add()
         self.add_1 = Add()
     
     def call(self, inputs, training):
+
 
         x = self.norm_0(inputs)
         x = self.mha(
@@ -75,8 +84,14 @@ class Encoder(Layer):
 
         #MLP block 
         y = self.norm_1(x)
-        y = self.dense_0(y)
-        y = self.dense_1(y)
+        y = self.conv_0(y)
         y = self.dropout_1(y, training)
+        y = self.conv_1(y)
+        
 
         return self.add_1([x, y])
+
+
+
+if __name__ == "__main__":
+    postional_embedding = tf.keras_nlp.layers.PositionalEmbedding(sequence_length = 128)
