@@ -42,10 +42,10 @@ sweep_config = {
       #    'values': [2.5e-4, 1e-4, 5e-5, 1e-5]
       #},
       'warmup_steps': {
-        'value': 10
+        'value': 5
       },
       'batch_size': {
-        'value': 64
+        'value': 8
       },
       'global_clipnorm': {
         'value': 3.0

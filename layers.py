@@ -1,14 +1,13 @@
 from tensorflow.keras.layers import Add, Dense, Conv1D, Dropout, MultiHeadAttention, LayerNormalization, Layer
 from tensorflow.keras.initializers import TruncatedNormal
-import pdb
 import tensorflow as tf
 
 class PositionalEmbedding(Layer):
-    def __init__(self, units, dropout_rate, **kwargs):
+    def __init__(self, units,dropout_rate,  **kwargs):
         super(PositionalEmbedding, self).__init__(**kwargs)
 
         self.units = units
-
+        self.conv_1 = Conv1D(filters  = units, kernel_size = 1)
         self.projection = Dense(units, kernel_initializer=TruncatedNormal(stddev=0.02))
 
         self.dropout = Dropout(rate=dropout_rate)
@@ -25,6 +24,7 @@ class PositionalEmbedding(Layer):
 
     def call(self, inputs, training):
         x = self.projection(inputs)
+        # x = self.conv_1(inputs)
         x = x + self.position
         return self.dropout(x, training=training)
 
@@ -45,19 +45,19 @@ class Encoder(Layer):
             kernel_initializer = TruncatedNormal(stddev = 0.02)
         )
 
-        # self. dense_0 = Dense(
-        #     units = mlp_dim, 
-        #     activation = "gelu", 
-        #     kernel_initializer = TruncatedNormal(stddev = 0.02)
-        # )
+        self. dense_0 = Dense(
+            units = mlp_dim, 
+            activation = "gelu", 
+            kernel_initializer = TruncatedNormal(stddev = 0.02)
+        )
 
-        # self.dense_1 = Dense(
-        #     units = embed_dim, 
-        #     kernel_initializer = TruncatedNormal(stddev = 0.02)
-        # )
+        self.dense_1 = Dense(
+            units = embed_dim, 
+            kernel_initializer = TruncatedNormal(stddev = 0.02)
+        )
 
         self.conv_0 = Conv1D(filters = 4 , kernel_size = 1, activation = 'relu')
-        self.conv_1 = Conv1D(filters  = 128, kernel_size = 1)
+        self.conv_1 = Conv1D(filters  = embed_dim, kernel_size = 1)
 
         self.dropout_0 = Dropout(rate = dropout_rate)
         self.dropout_1 = Dropout(rate = dropout_rate)
@@ -68,7 +68,7 @@ class Encoder(Layer):
         self.add_0 = Add()
         self.add_1 = Add()
     
-    def call(self, inputs, training):
+    def call(self, inputs, training , mask):
 
 
         x = self.norm_0(inputs)
@@ -76,6 +76,7 @@ class Encoder(Layer):
             query = x, 
             value = x, 
             key = x,
+            attention_mask = mask,
             training = training
         )
 

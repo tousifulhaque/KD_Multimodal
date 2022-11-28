@@ -1,5 +1,5 @@
-# from  wandb_config import sweep_config
-# import wandb
+from  wandb_config import sweep_config
+import wandb
 import tensorflow as tf
 from model import Transformer
 from tensorflow.keras.optimizers import Adam
@@ -7,42 +7,43 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, LearningRateScheduler, Callback
 from tensorflow.keras.losses import BinaryCrossentropy
 from loss import smoothed_sparse_categorical_crossentropy
-from sklearn.model_selection import train_test_split 
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.metrics import Recall, Precision , AUC
 from lr_scheduler  import cosine_schedule
 import numpy as np
-# from wandb.keras import WandbCallback
+from wandb.keras import WandbCallback
 import warnings
 import logging
 import os
 
-config = {
-      'epochs': 50,
-      'num_layers':  3,
-      'embed_layer_size': 128,
-      'fc_layer_size': 256,
-      'num_heads': 6,
-      'dropout': 0.1,
-      'attention_dropout': 0.1,
-      'optimizer': 'adam',
-      'amsgrad': False,
-      'label_smoothing': 0.1,
-      'learning_rate': 1e-3,
-      #'weight_decay': {
-      #    'values': [2.5e-4, 1e-4, 5e-5, 1e-5]
-      'warmup_steps': 10,
-      'batch_size': 64,
-      'global_clipnorm': 3.0
-}
+# config = {
+#       'epochs': 50,
+#       'num_layers':  3,
+#       'embed_layer_size': 128,
+#       'fc_layer_size': 256,
+#       'num_heads': 6,
+#       'dropout': 0.1,
+#       'attention_dropout': 0.1,
+#       'optimizer': 'adam',
+#       'amsgrad': False,
+#       'label_smoothing': 0.1,
+#       'learning_rate': 1e-3,
+#       #'weight_decay': {
+#       #    'values': [2.5e-4, 1e-4, 5e-5, 1e-5]
+#       'warmup_steps': 10,
+#       'batch_size': 64,
+#       'global_clipnorm': 3.0
+# }
 
 class PrintLR(Callback):
     def on_epoch_end(self, epoch, logs=None):
         wandb.log({"lr": self.model.optimizer.lr.numpy()}, commit=False)
 
-def train( input_shape = None):
+def train():
     config = {
       'epochs': 50,
       'num_layers':  3,
-      'embed_layer_size': 128,
+      'embed_layer_size': 3,
       'global_clipnorm' : 3.0,
       'fc_layer_size': 256,
       'num_heads': 2,
@@ -54,12 +55,12 @@ def train( input_shape = None):
       'learning_rate': 1e-3,
       #'weight_decay': {
       #    'values': [2.5e-4, 1e-4, 5e-5, 1e-5]
-      'warmup_steps': 10,
+      'warmup_steps': 5,
       'batch_size': 8}
   
-  # with wandb.init(config=config):
-  #   tf.debugging.set_log_device_placement(True)
-  #   config = wandb.config
+#  with wandb.init(config=config):
+#     tf.debugging.set_log_device_placement(True)
+#     config = wandb.config
     
     # Generate new model
     model = Transformer(
@@ -72,6 +73,8 @@ def train( input_shape = None):
       dropout_rate=config['dropout'],
       attention_dropout_rate=config['attention_dropout'],
     )
+
+    
 
     # adapt on training dataset - must be before model.compile !!!
     model.input_norm.adapt(X_train, batch_size=config['batch_size'])
@@ -96,12 +99,12 @@ def train( input_shape = None):
     model.compile(
       loss= BinaryCrossentropy(label_smoothing=config['label_smoothing']),
       optimizer=optim,
-      metrics=["accuracy"],
+      metrics=[Recall(), Precision() , AUC()],
     )
 
 
     # Train model
-    model.fit(
+    history = model.fit(
       X_train,
       y_train,
       batch_size=config['batch_size'],
@@ -110,21 +113,23 @@ def train( input_shape = None):
       callbacks=[
         LearningRateScheduler(cosine_schedule(base_lr=config['learning_rate'], total_steps=config['epochs'], warmup_steps=config['warmup_steps'])),
         # PrintLR(),
-        # WandbCallback(monitor="val_accuracy", mode='max', save_weights_only=True),
-        EarlyStopping(monitor="val_accuracy", mode='max', min_delta=0.001, patience=5),
+        # WandbCallback(monitor="val_precision", mode='max', save_weights_only=True),
+        EarlyStopping(monitor="val_loss", mode='min', min_delta=0.001, patience=5),
       ],
       verbose=1
     )
+    print(history)
+    model.evaluate(X_test, y= y_test, batch_size = config['batch_size'] , steps = X_test.shape[0] / config['batch_size'])
 
-    model.summary()
+    
         
 
 if __name__ == "__main__":
 
     # wandb.login()
-    # warnings.simplefilter('ignore')
-    # os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
-    # logging.getLogger('tensorflow').setLevel(logging.FATAL)
+    warnings.simplefilter('ignore')
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
+    logging.getLogger('tensorflow').setLevel(logging.FATAL)
 
     # load dataset
     dataset_path = os.path.join(os.getcwd(), 'fall_detection_dataset.npz')
@@ -141,10 +146,7 @@ if __name__ == "__main__":
         X_train, y_train, test_size=0.15, random_state=9, stratify=y_train
     )
 
-    # # sweep_id = wandb.sweep(sweep_config, project="KD_Transformer")
-    # print(y_train.shape)
+    # sweep_id = wandb.sweep(sweep_config, project="KD_Transformer")
     with tf.device('/gpu:0'):
-
-    #   # wandb.agent(sweep_id, train, count=32)
       train()
 

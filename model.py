@@ -3,6 +3,7 @@ from layers import PositionalEmbedding, Encoder
 from tensorflow.keras import Model
 import tensorflow as tf
 
+
 class Transformer(Model):
     def __init__(
         self,
@@ -40,11 +41,14 @@ class Transformer(Model):
         self.final_layer = Dense(1, kernel_initializer="zeros", activation = 'sigmoid')
 
     def call(self, inputs, training = True):
+        expanded_input = tf.cast(tf.tile(tf.expand_dims(inputs, axis=-2), [1, 1, 500,1]), tf.float32)
+        self.masking_layer.build(expanded_input.shape)
+        mask = self.masking_layer.compute_mask(expanded_input)
         x = self.input_norm(inputs) 
         # mask = self.masking_layer.compute_mask(inputs) 
         x = self.pos_embs(x, training=training)
         for layer in self.e_layers:
-            x = layer(x, training=training)
+            x = layer(x, training=training , mask = mask)
         x = self.norm(x)
         x = self.pool(x)
         x = self.dense_0(x)

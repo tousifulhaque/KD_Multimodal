@@ -19,6 +19,7 @@ def preprocessing():
     fall_pattern = re.compile("Fall")
     trials = []
     labels = []
+    length = []
     for file_path in all_file_path:
         label = None
         if fall_pattern.search(file_path):
@@ -56,13 +57,19 @@ def preprocessing():
                         trial.dropna(inplace = True)
                                     
                     trial = tf.convert_to_tensor(trial.values, dtype = tf.float32)
+                    if trial.shape[0] > 300:
+                        # print(file_path)
+                        length.append(trial.shape[0])
+                    
                     labels.append(label)
                     trials.append(trial)
+        
         else:
             raise Exception(f'{file_path} doesnt have trimmed data')
 
  
-
+    # print(f'Min {min(length)} , Median {statistics.median(length)}, Max {max(length)}, Mean {statistics.mean(length)}')
+    print(len(length))
 
     trials = tf.keras.utils.pad_sequences(trials, maxlen= 300, value = 0.0 , dtype = float, padding = 'post' )
     
