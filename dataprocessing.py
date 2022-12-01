@@ -15,11 +15,13 @@ def preprocessing():
     adl_files = glob.glob(adl)
     all_file_path = fall_files + adl_files
 
-
+    trials_count = {}
     fall_pattern = re.compile("Fall")
     trials = []
     labels = []
     length = []
+    fall_count = 0
+
     for file_path in all_file_path:
         label = None
         if fall_pattern.search(file_path):
@@ -44,6 +46,7 @@ def preprocessing():
                 trial_end_lst = null_col[10::10]
                 
                 for i in range(len(null_col)//10 + 1):
+                    trials_count[label] = trials_count.get(label , 0) + 1
                     trial = None
                     if i == 0 :
 
@@ -68,23 +71,21 @@ def preprocessing():
             raise Exception(f'{file_path} doesnt have trimmed data')
 
  
-    # print(f'Min {min(length)} , Median {statistics.median(length)}, Max {max(length)}, Mean {statistics.mean(length)}')
-    print(len(length))
-
-    trials = tf.keras.utils.pad_sequences(trials, maxlen= 300, value = 0.0 , dtype = float, padding = 'post' )
+    # # print(f'Min {min(length)} , Median {statistics.median(length)}, Max {max(length)}, Mean {statistics.mean(length)}')
+    # trials = tf.keras.utils.pad_sequences(trials, maxlen= 300, value = 0.0 , dtype = float, padding = 'post' )
     
 
 
     # #transposing the trials 
     # trials = tf.transpose(trials, perm = [0,2,1])
-    print(trials.shape)
+    print(trials_count)
 
 
-    try:
-         np.savez_compressed("fall_detection_dataset", trials=trials, labels=labels)
-         print('Creating Dataset successful')
-    except:
-        raise RuntimeError("Failed creating the dataset")
+    # try:
+    #      np.savez_compressed("fall_detection_dataset", trials=trials, labels=labels)
+    #      print('Creating Dataset successful')
+    # except:
+    #     raise RuntimeError("Failed creating the dataset")
     
 
 if __name__ == "__main__":
