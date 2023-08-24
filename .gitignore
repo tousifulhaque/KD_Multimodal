@@ -1,8 +1,11 @@
 new_dataset.npz
+/.DS_Store
+/tmp
+/logs
 KU-HAR_time_domain_subsamples_20750x300.csv
 /datasets
-<<<<<<< HEAD
+/.ipynb_checkpoints
 /dataset
-=======
-/tflite
->>>>>>> 07c22a6dacdad66e657f43b11fd0d1200e3a30dd
+/tflite_models
+/__pycache__
+
