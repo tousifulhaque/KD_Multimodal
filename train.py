@@ -51,6 +51,7 @@ model = transformer(length = config['length'],
         mlp_dim = config['fc_layer_size'], 
         num_layers = config['num_layers'])
 
+
 #loading data
 train_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed/watch_train.csv')
 val_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed/watch_val.csv')
