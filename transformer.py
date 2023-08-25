@@ -1,3 +1,5 @@
+#global import 
+import os
 
 #tensorflow imports 
 from tensorflow import keras
@@ -22,37 +24,48 @@ def get_positional_embedding(seq_len,d_model, n = 10000):
     P = P[np.newaxis, : ,:]
     return tf.Variable(P,trainable = False ,dtype = tf.float32)
 
-def encoder(x, embed_dim, mlp_dim, num_heads, dropout_rate, attention_dropout_rate, length, channel):
+def encoder(x, embed_dim,attn_dim, mlp_dim, num_heads, dropout_rate, attention_dropout_rate, length, channel):
     
     #attention_layer
     y = LayerNormalization(epsilon = 1e-6)(x)
-    y = MultiHeadAttention(num_heads = num_heads,key_dim = embed_dim,dropout = attention_dropout_rate, kernel_initializer = TruncatedNormal(stddev = 0.02))(query = x,value = x,key = x,training = True)
+    y = MultiHeadAttention(num_heads = num_heads,key_dim = attn_dim,dropout = attention_dropout_rate, kernel_initializer = TruncatedNormal(stddev = 0.02))(query = x,value = x,key = x,training = True)
     y = Dropout(rate = dropout_rate)(y)
     y = Add()([x,y])
+    y = LayerNormalization(epsilon = 1e-6)(y)
+    res = y
+    
     
     #mlp_layer
-    y = LayerNormalization(epsilon = 1e-6)(x)
+    
     y = Dense(units = mlp_dim, kernel_initializer = TruncatedNormal(stddev = 0.02))(y)
     y = Dropout(rate = dropout_rate)(y)
-    y = Dense(units = embed_dim, kernel_initializer = TruncatedNormal(stddev = 0.02))(y)
+    y = Conv1D(filters = x.shape[-1],kernel_size = 3,padding = "same")(y)
     y = Dropout(rate = dropout_rate)(y)
-    y = Add()([x, y])
+    y = Add()([res, y])
+    y = LayerNormalization(epsilon = 1e-6)(y)
     
     return y
+    
+    
 
-def transformer(length, channels,num_layers, embed_dim, mlp_dim, num_heads, dropout_rate, attention_dropout_rate):
+def transformer(length, channels,num_layers, embed_dim, attn_dim,mlp_dim, num_heads, dropout_rate, attention_dropout_rate):
     
     #initial normalization
-    pos_embed = get_positional_embedding(length, embed_dim)
+    #pos_embed = get_positional_embedding(length, embed_dim)
     inputs= keras.Input(shape = (length, channels))
-    x = Dense(embed_dim)(inputs)
+    x = inputs
+    #x = Dense(embed_dim)(inputs)
     #x = Normalization()(inputs)
-    x = x + pos_embed
+    #x = x + pos_embed
     #stacking encoder layers
     for _ in range(num_layers):
-        x = encoder(x,embed_dim, mlp_dim, num_heads, dropout_rate, attention_dropout_rate, length,channels)
-    x = LayerNormalization(epsilon=1e-5)(x)
+        x = encoder(x,embed_dim,attn_dim, mlp_dim, num_heads, dropout_rate, attention_dropout_rate, length,channels)
+    #x = LayerNormalization(epsilon=1e-5)(x)
     
+    for dim in [8, 16]:
+        x = Dense(dim, activation = 'relu')(x)
+        x = Dropout(dropout_rate)(x)
+        
     #pooling
     x = GlobalAveragePooling1D(data_format = 'channels_first')(x)
     
