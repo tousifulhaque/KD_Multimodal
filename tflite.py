@@ -43,7 +43,6 @@ with open('transformer_watch50.tflite', 'wb') as f:
 
 
 test_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed/watch_test.csv')
-test_data = np.load(test_dataset_path)
 X_test, y_test = process_data(test_dataset_path, window_size, stride)
 
 #using interpreter to test
