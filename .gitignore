@@ -8,4 +8,5 @@ KU-HAR_time_domain_subsamples_20750x300.csv
 /dataset
 /tflite_models
 /__pycache__
+/tflite
 
