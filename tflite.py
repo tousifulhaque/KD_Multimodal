@@ -3,7 +3,10 @@ import numpy as np
 import os
 from transformer import transformer
 from train import config
+from utils import process_data
 
+window_size = 50
+stride = 5
 model = transformer(length = config['length'],
         channels=config['channel'],
         num_heads=config['num_heads'],
@@ -39,10 +42,9 @@ with open('transformer_watch50.tflite', 'wb') as f:
     f.write(tflite_model)
 
 
-test_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed\watch_test.csv')
+test_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed/watch_test.csv')
 test_data = np.load(test_dataset_path)
-X_test = test_data['trials']
-y_test = test_data['labels']
+X_test, y_test = process_data(test_dataset_path, window_size, stride)
 
 #using interpreter to test
 interpreter = tf.lite.Interpreter(model_path="transformer_tf24_s50.tflite")
