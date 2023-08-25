@@ -52,8 +52,8 @@ model = transformer(length = config['length'],
         num_layers = config['num_layers'])
 
 #loading data
-train_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed\\watch_train.csv')
-val_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed\\watch_val.csv')
+train_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed/watch_train.csv')
+val_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed/watch_val.csv')
 window_size = 50
 stride = 5
 
