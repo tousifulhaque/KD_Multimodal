@@ -30,7 +30,7 @@ def encoder(x, embed_dim,attn_dim, mlp_dim, num_heads, dropout_rate, attention_d
     y = LayerNormalization(epsilon = 1e-6)(x)
     y = MultiHeadAttention(num_heads = num_heads,key_dim = attn_dim,dropout = attention_dropout_rate, kernel_initializer = TruncatedNormal(stddev = 0.02))(query = x,value = x,key = x,training = True)
     y = Dropout(rate = dropout_rate)(y)
-    y = Add()([x,y])
+    y = x + y
     y = LayerNormalization(epsilon = 1e-6)(y)
     res = y
     
@@ -41,7 +41,7 @@ def encoder(x, embed_dim,attn_dim, mlp_dim, num_heads, dropout_rate, attention_d
     y = Dropout(rate = dropout_rate)(y)
     y = Dense(units = x.shape[-1],kernel_initializer = TruncatedNormal(stddev = 0.02))(y)
     y = Dropout(rate = dropout_rate)(y)
-    y = Add()([res, y])
+    y = res + y
     y = LayerNormalization(epsilon = 1e-6)(y)
     
     return y
