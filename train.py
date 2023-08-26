@@ -20,7 +20,7 @@ from utils import process_data , F1_Score, cosine_schedule
 
 #config
 config = {
-        'epochs': 50,
+        'epochs': 20,
         'length':50,
         'channel':3,
         'num_layers':  2,
