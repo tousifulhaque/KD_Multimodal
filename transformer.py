@@ -39,7 +39,7 @@ def encoder(x, embed_dim,attn_dim, mlp_dim, num_heads, dropout_rate, attention_d
     
     y = Dense(units = mlp_dim, kernel_initializer = TruncatedNormal(stddev = 0.02))(y)
     y = Dropout(rate = dropout_rate)(y)
-    y = Conv1D(filters = x.shape[-1],kernel_size = 3,padding = "same")(y)
+    y = Dense(units = x.shape[-1],kernel_initializer = TruncatedNormal(stddev = 0.02))(y)
     y = Dropout(rate = dropout_rate)(y)
     y = Add()([res, y])
     y = LayerNormalization(epsilon = 1e-6)(y)
