@@ -51,20 +51,20 @@ def encoder(x, embed_dim,attn_dim, mlp_dim, num_heads, dropout_rate, attention_d
 def transformer(length, channels,num_layers, embed_dim, attn_dim,mlp_dim, num_heads, dropout_rate, attention_dropout_rate):
     
     #initial normalization
-    #pos_embed = get_positional_embedding(length, embed_dim)
+    pos_embed = get_positional_embedding(length, embed_dim)
     inputs= keras.Input(shape = (length, channels))
     x = inputs
-    #x = Dense(embed_dim)(inputs)
+    x = Dense(embed_dim)(inputs)
     #x = Normalization()(inputs)
-    #x = x + pos_embed
+    x = x + pos_embed
     #stacking encoder layers
     for _ in range(num_layers):
         x = encoder(x,embed_dim,attn_dim, mlp_dim, num_heads, dropout_rate, attention_dropout_rate, length,channels)
     #x = LayerNormalization(epsilon=1e-5)(x)
     
-    for dim in [8, 16]:
-        x = Dense(dim, activation = 'relu')(x)
-        x = Dropout(dropout_rate)(x)
+    # for dim in [8, 16]:
+    #     x = Dense(dim, activation = 'relu')(x)
+    #     x = Dropout(dropout_rate)(x)
         
     #pooling
     x = GlobalAveragePooling1D(data_format = 'channels_first')(x)
