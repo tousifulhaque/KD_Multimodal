@@ -52,7 +52,7 @@ MLP_DIMS = [16, 8] # can be []
 
 #train config
 config = {
-        'epochs': 20,
+        'epochs': 50,
         'length':50,
         'channel':3,
         'num_layers':  2,
