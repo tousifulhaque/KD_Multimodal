@@ -49,3 +49,25 @@ HEAD_SIZE = 128
 FF_DIM = 16
 NUM_ATTN_LAYERS = 4
 MLP_DIMS = [16, 8] # can be []
+
+#train config
+config = {
+        'epochs': 20,
+        'length':50,
+        'channel':3,
+        'num_layers':  2,
+        'embed_layer_size': 16,
+        'attention_head_dim' : 128,
+        'global_clipnorm' : 3.0,
+        'fc_layer_size': 32,
+        'num_heads': 4,
+        'dropout': 0.1,
+        'attention_dropout': 0.0,
+        'optimizer': 'adam',
+        'amsgrad': False,
+        'label_smoothing': 0.1,
+        'learning_rate': 1e-3,
+        #'weight_decay': {
+        #    'values': [2.5e-4, 1e-4, 5e-5, 1e-5]
+        'warmup_steps': 5,
+        'batch_size': 32}

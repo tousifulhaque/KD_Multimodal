@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import os
 from transformer import transformer
-from train import config
+from cfg import config
 from utils import process_data
 
 window_size = 50

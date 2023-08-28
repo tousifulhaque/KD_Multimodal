@@ -15,30 +15,11 @@ from tensorflow.keras.metrics import Recall, Precision
 
 
 #local imports
+from cfg import config
 from transformer import transformer
 from utils import process_data , F1_Score, cosine_schedule
-
 #config
-config = {
-        'epochs': 20,
-        'length':50,
-        'channel':3,
-        'num_layers':  2,
-        'embed_layer_size': 16,
-        'attention_head_dim' : 128,
-        'global_clipnorm' : 3.0,
-        'fc_layer_size': 32,
-        'num_heads': 4,
-        'dropout': 0.1,
-        'attention_dropout': 0.0,
-        'optimizer': 'adam',
-        'amsgrad': False,
-        'label_smoothing': 0.1,
-        'learning_rate': 1e-3,
-        #'weight_decay': {
-        #    'values': [2.5e-4, 1e-4, 5e-5, 1e-5]
-        'warmup_steps': 5,
-        'batch_size': 32}
+
 #creating model
 if __name__ == '__main__':
     model = transformer(length = config['length'],
