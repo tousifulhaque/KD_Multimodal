@@ -30,9 +30,9 @@ def encoder(x, embed_dim,attn_dim, mlp_dim, num_heads, dropout_rate, attention_d
     y = LayerNormalization(epsilon = 1e-6)(x)
     y = MultiHeadAttention(num_heads = num_heads,key_dim = attn_dim,dropout = attention_dropout_rate, kernel_initializer = TruncatedNormal(stddev = 0.02))(query = x,value = x,key = x,training = True)
     y = Dropout(rate = dropout_rate)(y)
-    y = x + y
-    y = LayerNormalization(epsilon = 1e-6)(y)
-    res = y
+    res = x + y
+    y = LayerNormalization(epsilon = 1e-6)(res)
+
     
     
     #mlp_layer
@@ -43,6 +43,8 @@ def encoder(x, embed_dim,attn_dim, mlp_dim, num_heads, dropout_rate, attention_d
     y = Dropout(rate = dropout_rate)(y)
     y = res + y
     y = LayerNormalization(epsilon = 1e-6)(y)
+        # Normalization and Attention
+ 
     
     return y
     
@@ -53,7 +55,6 @@ def transformer(length, channels,num_layers, embed_dim, attn_dim,mlp_dim, num_he
     #initial normalization
     pos_embed = get_positional_embedding(length, embed_dim)
     inputs= keras.Input(shape = (length, channels))
-    x = inputs
     x = Dense(embed_dim)(inputs)
     #x = Normalization()(inputs)
     x = x + pos_embed

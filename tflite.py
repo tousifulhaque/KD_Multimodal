@@ -4,7 +4,7 @@ import os
 from transformer import transformer
 from cfg import config
 from utils import process_data
-
+os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 window_size = 50
 stride = 5
 model = transformer(length = config['length'],
@@ -55,11 +55,12 @@ data = X_test[1, :, :]
 data = data[np.newaxis, :]
 
 # Set input tensor to the interpreter
+print(interpreter)
 interpreter.set_tensor(input_details[0]['index'], data.astype(np.float32))
-
+print('Before invoke')
 # Run inference
 interpreter.invoke()
-
+print('After invoke')
 # Get the output tensor and post-process the results (example)
 output_data = interpreter.get_tensor(output_details[0]['index'])
 print("Inference result:", output_data)

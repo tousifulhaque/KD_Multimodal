@@ -2,7 +2,7 @@ import os
 import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import layers
-from matplotlib import pyplot
+#from matplotlib import pyplot
 from numpy import argmax
 
 from tensorflow import keras
