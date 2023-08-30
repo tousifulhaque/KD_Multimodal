@@ -68,7 +68,7 @@ if __name__ == '__main__':
         validation_data=(X_val, y_val),
         shuffle = True,
         callbacks=[
-            LearningRateScheduler(cosine_schedule(base_lr=config['learning_rate'], total_steps=config['epochs'], warmup_steps=config['warmup_steps'])),
+            #LearningRateScheduler(cosine_schedule(base_lr=config['learning_rate'], total_steps=config['epochs'], warmup_steps=config['warmup_steps'])),
             #EarlyStopping(monitor="loss", mode='min', min_delta=0.001, patience=5),
             model_checkpoint, tensorboard_callback
         ],
