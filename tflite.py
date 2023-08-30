@@ -1,26 +1,27 @@
 import tensorflow as tf
+from tensorflow.keras.models import load_model
 import numpy as np
 import os
 from transformer import transformer
 from cfg import config
-from utils import process_data
+from utils import process_data, F1_Score
 os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 window_size = 50
 stride = 5
-model = transformer(length = config['length'],
-        channels=config['channel'],
-        num_heads=config['num_heads'],
-        dropout_rate = config['dropout'],
-        attn_dim = config['attention_head_dim'],
-        attention_dropout_rate = config['attention_dropout'],
-        embed_dim =config['embed_layer_size'],
-        mlp_dim = config['fc_layer_size'], 
-        num_layers = config['num_layers'])
+#model = transformer(length = config['length'],
+#        channels=config['channel'],
+#        num_heads=config['num_heads'],
+#        dropout_rate = config['dropout'],
+#        attn_dim = config['attention_head_dim'],
+#        attention_dropout_rate = config['attention_dropout'],
+#        embed_dim =config['embed_layer_size'],
+#        mlp_dim = config['fc_layer_size'], 
+#        num_layers = config['num_layers'])
 
 #load weight
-weight_path = 'tmp/weights.ckpt'
-model.load_weights(weight_path)
-
+#weight_path = 'tmp/weights.ckpt'
+#model.load_weights(weight_path)
+model = load_model('tmp/transformer.h5')
 #convert to tflite
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 
