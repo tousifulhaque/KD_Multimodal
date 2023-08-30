@@ -26,10 +26,9 @@ if __name__ == '__main__':
         channels=config['channel'],
         num_heads=config['num_heads'],
         dropout_rate = config['dropout'],
-        attn_dim = config['attention_head_dim'],
         attention_dropout_rate = config['attention_dropout'],
         embed_dim =config['embed_layer_size'],
-        mlp_dim = config['fc_layer_size'], 
+        mlp_dim = config['fc_layer_size'],
         num_layers = config['num_layers'])
 
 
@@ -50,11 +49,11 @@ if __name__ == '__main__':
             global_clipnorm=config['global_clipnorm'],
             amsgrad=config['amsgrad'],
         ),
-        metrics=[Recall(), Precision()],
+        metrics=[Recall(), Precision(), F1_Score()],
         )
-    checkpoint_filepath = os.path.join(os.getcwd(), 'tmp/transformer.h5')
+    checkpoint_filepath = os.path.join(os.getcwd(), 'tmp/weights.ckpt')
     model_checkpoint = ModelCheckpoint(filepath = checkpoint_filepath, 
-                                        save_weights_only = False, 
+                                        save_weights_only = True, 
                                         monitor = 'val_recall', 
                                         mode = 'max', 
                                         save_best_only = True, 

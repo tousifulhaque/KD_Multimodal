@@ -27,11 +27,11 @@ def get_positional_embedding(seq_len,d_model, n = 10000):
 def encoder(x, embed_dim, mlp_dim, num_heads, attn_drop_rate, num_channels, drop_rate):
     
     #attention_layer
-    #y = LayerNormalization(epsilon = 1e-6)(x)
+    y = LayerNormalization(epsilon = 1e-6)(x)
     y = MultiHeadAttention(num_heads = num_heads,key_dim =embed_dim ,dropout = attn_drop_rate, kernel_initializer = TruncatedNormal(stddev = 0.02))(query = x,value = x,key = x,training = True)
     y = Dropout(rate = drop_rate)(y)
-    y = Add()([x ,y])
-    res= LayerNormalization(epsilon = 1e-6)(y)
+    res = Add()([x ,y])
+    y= LayerNormalization(epsilon = 1e-6)(res)
     
 #     #mlp_layer
     
@@ -40,13 +40,12 @@ def encoder(x, embed_dim, mlp_dim, num_heads, attn_drop_rate, num_channels, drop
     y = Dense(units = num_channels, kernel_initializer = TruncatedNormal(stddev = 0.02))(y)
     y = Dropout(rate = drop_rate)(y)
     y = Add()([res,y])
-    y = LayerNormalization(epsilon = 1e-6)(y)
     
     return y
     
     
 
-def transformer(length, channels,num_layers, embed_dim, attn_dim,mlp_dim, num_heads, dropout_rate, attention_dropout_rate):
+def transformer(length, channels,num_layers,embed_dim,mlp_dim,num_heads, dropout_rate, attention_dropout_rate):
     
     #initial normalization
     #pos_embed = get_positional_embedding(length, embed_dim)
@@ -62,9 +61,9 @@ def transformer(length, channels,num_layers, embed_dim, attn_dim,mlp_dim, num_he
     
 
     
-#     for dim in [8, 16]:
-#         x = Dense(dim, activation = 'relu')(x)
-#         x = Dropout(dropout_rate)(x)
+    for dim in [8, 16]:
+        x = Dense(dim, activation = 'relu')(x)
+        x = Dropout(dropout_rate)(x)
         
 #     #pooling
     x = GlobalAveragePooling1D(data_format = 'channels_first')(x)
