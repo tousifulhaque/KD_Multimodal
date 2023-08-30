@@ -18,8 +18,8 @@ GRAPH = False
 # data files
 # ###############################
 TRAIN = "dataset/new_watch_data_processed/watch_train.csv" # 
-TEST = "dataset/new_watch_data_processed/watch_test.csv" # 
-VALID =  "dataset/new_watch_data_processed/watch_val.csv" # optional, if none given test set will be used for validation
+TEST = "new_watch_data_processed/watch_test.csv" # 
+VALID =  "new_watch_data_processed/watch_val.csv" # optional, if none given test set will be used for validation
 
 HEADER = 0
 INDEX = 0
