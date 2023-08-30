@@ -24,27 +24,23 @@ def get_positional_embedding(seq_len,d_model, n = 10000):
     P = P[np.newaxis, : ,:]
     return tf.Variable(P,trainable = False ,dtype = tf.float32)
 
-def encoder(x, embed_dim,attn_dim, mlp_dim, num_heads, dropout_rate, attention_dropout_rate, length, channel):
+def encoder(x, embed_dim, mlp_dim, num_heads, attn_drop_rate, num_channels, drop_rate):
     
     #attention_layer
-    y = LayerNormalization(epsilon = 1e-6)(x)
-    y = MultiHeadAttention(num_heads = num_heads,key_dim = attn_dim,dropout = attention_dropout_rate, kernel_initializer = TruncatedNormal(stddev = 0.02))(query = x,value = x,key = x,training = True)
-    y = Dropout(rate = dropout_rate)(y)
-    res = x + y
-    y = LayerNormalization(epsilon = 1e-6)(res)
-
+    #y = LayerNormalization(epsilon = 1e-6)(x)
+    y = MultiHeadAttention(num_heads = num_heads,key_dim =embed_dim ,dropout = attn_drop_rate, kernel_initializer = TruncatedNormal(stddev = 0.02))(query = x,value = x,key = x,training = True)
+    y = Dropout(rate = drop_rate)(y)
+    y = Add()([x ,y])
+    res= LayerNormalization(epsilon = 1e-6)(y)
     
+#     #mlp_layer
     
-    #mlp_layer
-    
-    y = Dense(units = mlp_dim, kernel_initializer = TruncatedNormal(stddev = 0.02))(y)
-    y = Dropout(rate = dropout_rate)(y)
-    y = Dense(units = x.shape[-1],kernel_initializer = TruncatedNormal(stddev = 0.02))(y)
-    y = Dropout(rate = dropout_rate)(y)
-    y = res + y
+    y = Dense(units = mlp_dim, kernel_initializer = TruncatedNormal(stddev = 0.02))(res)
+    y = Dropout(rate = drop_rate)(y)
+    y = Dense(units = num_channels, kernel_initializer = TruncatedNormal(stddev = 0.02))(y)
+    y = Dropout(rate = drop_rate)(y)
+    y = Add()([res,y])
     y = LayerNormalization(epsilon = 1e-6)(y)
-        # Normalization and Attention
- 
     
     return y
     
@@ -53,21 +49,24 @@ def encoder(x, embed_dim,attn_dim, mlp_dim, num_heads, dropout_rate, attention_d
 def transformer(length, channels,num_layers, embed_dim, attn_dim,mlp_dim, num_heads, dropout_rate, attention_dropout_rate):
     
     #initial normalization
-    pos_embed = get_positional_embedding(length, embed_dim)
+    #pos_embed = get_positional_embedding(length, embed_dim)
     inputs= keras.Input(shape = (length, channels))
-    x = Dense(embed_dim)(inputs)
+    x = inputs
+    #x = Dense(embed_dim,  kernel_initializer = TruncatedNormal(stddev = 0.02))(inputs)
     #x = Normalization()(inputs)
-    x = x + pos_embed
+    #x = Add()([x, pos_embed])
     #stacking encoder layers
     for _ in range(num_layers):
-        x = encoder(x,embed_dim,attn_dim, mlp_dim, num_heads, dropout_rate, attention_dropout_rate, length,channels)
+        x = encoder(x = x,embed_dim = embed_dim,mlp_dim = mlp_dim, num_heads = num_heads, attn_drop_rate = attention_dropout_rate, drop_rate = dropout_rate, num_channels = channels)
     #x = LayerNormalization(epsilon=1e-5)(x)
     
-    # for dim in [8, 16]:
-    #     x = Dense(dim, activation = 'relu')(x)
-    #     x = Dropout(dropout_rate)(x)
+
+    
+#     for dim in [8, 16]:
+#         x = Dense(dim, activation = 'relu')(x)
+#         x = Dropout(dropout_rate)(x)
         
-    #pooling
+#     #pooling
     x = GlobalAveragePooling1D(data_format = 'channels_first')(x)
     
     #output

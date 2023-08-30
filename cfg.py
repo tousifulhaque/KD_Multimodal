@@ -52,15 +52,15 @@ MLP_DIMS = [16, 8] # can be []
 
 #train config
 config = {
-        'epochs': 10,
+        'epochs': 5,
         'length':50,
         'channel':3,
-        'num_layers':  2,
-        'embed_layer_size': 16,
-        'attention_head_dim' : 128,
+        'num_layers':  4,
+        'embed_layer_size': 32,
+        'attention_head_dim' : 64,
         'global_clipnorm' : 3.0,
-        'fc_layer_size': 32,
-        'num_heads': 4,
+        'fc_layer_size': 64,
+        'num_heads': 8,
         'dropout': 0.1,
         'attention_dropout': 0.0,
         'optimizer': 'adam',
@@ -69,5 +69,5 @@ config = {
         'learning_rate': 1e-3,
         #'weight_decay': {
         #    'values': [2.5e-4, 1e-4, 5e-5, 1e-5]
-        'warmup_steps': 5,
-        'batch_size': 32}
+        'warmup_steps': 2,
+        'batch_size': 16}

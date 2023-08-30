@@ -23,14 +23,14 @@ from utils import process_data , F1_Score, cosine_schedule
 #creating model
 if __name__ == '__main__':
     model = transformer(length = config['length'],
-            channels=config['channel'],
-            num_heads=config['num_heads'],
-            dropout_rate = config['dropout'],
-            attn_dim = config['attention_head_dim'],
-            attention_dropout_rate = config['attention_dropout'],
-            embed_dim =config['embed_layer_size'],
-            mlp_dim = config['fc_layer_size'], 
-            num_layers = config['num_layers'])
+        channels=config['channel'],
+        num_heads=config['num_heads'],
+        dropout_rate = config['dropout'],
+        attn_dim = config['attention_head_dim'],
+        attention_dropout_rate = config['attention_dropout'],
+        embed_dim =config['embed_layer_size'],
+        mlp_dim = config['fc_layer_size'], 
+        num_layers = config['num_layers'])
 
 
     #loading data
