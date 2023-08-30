@@ -1,6 +1,11 @@
+#environmental import 
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.losses import BinaryCrossentropy
+from tensorflow.keras.metrics import Recall, Precision
+
 from transformer import transformer
 from cfg import config, TEST
-from utils import process_data
+from utils import process_data, F1_Score
 
 window_size = 50
 stride = 5
@@ -17,6 +22,14 @@ model = transformer(length = config['length'],
 #load weight
 weight_path = 'tmp/weights.ckpt'
 model.load_weights(weight_path)
+model.compile(
+    loss= BinaryCrossentropy(label_smoothing=config['label_smoothing']),
+    optimizer=Adam(
+        global_clipnorm=config['global_clipnorm'],
+        amsgrad=config['amsgrad'],
+    ),
+    metrics=[Recall(), Precision(), F1_Score()],
+    )
 
 #processing test data
 X_test, y_test = process_data(TEST,window_size,stride)
