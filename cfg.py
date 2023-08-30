@@ -52,8 +52,8 @@ MLP_DIMS = [16, 8] # can be []
 
 #train config
 config = {
-        'epochs': 50,
-        'length':50,
+        'epochs': 100,
+        'length':256,
         'channel':3,
         'num_layers':  4,
         'embed_layer_size': 128,
@@ -69,4 +69,4 @@ config = {
         #'weight_decay': {
         #    'values': [2.5e-4, 1e-4, 5e-5, 1e-5]
         'warmup_steps': 10,
-        'batch_size': 16}
+        'batch_size': 64}
