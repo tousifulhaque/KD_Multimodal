@@ -66,7 +66,7 @@ if __name__ == '__main__':
         batch_size=config['batch_size'],
         epochs=config['epochs'],
         validation_data=(X_val, y_val),
-        shuffle = True,
+        shuffle = False,
         callbacks=[
             #LearningRateScheduler(cosine_schedule(base_lr=config['learning_rate'], total_steps=config['epochs'], warmup_steps=config['warmup_steps'])),
             #EarlyStopping(monitor="loss", mode='min', min_delta=0.001, patience=5),
