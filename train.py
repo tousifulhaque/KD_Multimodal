@@ -52,9 +52,9 @@ if __name__ == '__main__':
         ),
         metrics=[Recall(), Precision() , F1_Score()],
         )
-    checkpoint_filepath = os.path.join(os.getcwd(), 'tmp/weights.ckpt')
+    checkpoint_filepath = os.path.join(os.getcwd(), 'tmp/transformer.h5')
     model_checkpoint = ModelCheckpoint(filepath = checkpoint_filepath, 
-                                        save_weights_only = True, 
+                                        save_weights_only = False, 
                                         monitor = 'val_f1_score', 
                                         mode = 'max', 
                                         save_best_only = True, 
