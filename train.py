@@ -35,8 +35,8 @@ if __name__ == '__main__':
     #loading data
     train_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed/watch_train.csv')
     val_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed/watch_val.csv')
-    window_size = 50
-    stride = 5
+    window_size = 256
+    stride = 10
 
     #processing train data 
     X_train, y_train = process_data(train_dataset_path, window_size, stride)
@@ -51,11 +51,11 @@ if __name__ == '__main__':
         ),
         metrics=[Recall(), Precision(), F1_Score()],
         )
-    checkpoint_filepath = os.path.join(os.getcwd(), 'tmp/weights.ckpt')
+    checkpoint_filepath = os.path.join(os.getcwd(),f'tmp/weights_{window_size}.ckpt')
     model_checkpoint = ModelCheckpoint(filepath = checkpoint_filepath, 
                                         save_weights_only = True, 
-                                        monitor = 'val_recall', 
-                                        mode = 'max', 
+                                        monitor = 'val_loss',
+                                        mode = 'min', 
                                         save_best_only = True, 
                                         verbose = True)
     log_dir = "logs/"  # Specify the directory where TensorBoard logs will be saved
@@ -66,7 +66,7 @@ if __name__ == '__main__':
         batch_size=config['batch_size'],
         epochs=config['epochs'],
         validation_data=(X_val, y_val),
-        shuffle = False,
+        shuffle = True,
         callbacks=[
             #LearningRateScheduler(cosine_schedule(base_lr=config['learning_rate'], total_steps=config['epochs'], warmup_steps=config['warmup_steps'])),
             #EarlyStopping(monitor="loss", mode='min', min_delta=0.001, patience=5),

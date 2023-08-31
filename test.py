@@ -7,8 +7,8 @@ from transformer import transformer
 from cfg import config, TEST
 from utils import process_data, F1_Score
 
-window_size = 50
-stride = 5
+window_size = 256
+stride = 10
 
 model = transformer(length = config['length'],
        channels=config['channel'],
@@ -20,7 +20,7 @@ model = transformer(length = config['length'],
        num_layers = config['num_layers'])
 
 #load weight
-weight_path = 'tmp/weights.ckpt'
+weight_path =f'tmp/weights_{window_size}.ckpt'
 model.load_weights(weight_path)
 model.compile(
     loss= BinaryCrossentropy(label_smoothing=config['label_smoothing']),
@@ -28,7 +28,7 @@ model.compile(
         global_clipnorm=config['global_clipnorm'],
         amsgrad=config['amsgrad'],
     ),
-    metrics=[Recall(), Precision(), F1_Score()],
+    metrics= [F1_Score(), Recall(), Precision()],
     )
 
 #processing test data
@@ -42,6 +42,7 @@ evaluation = model.evaluate(x=X_test,
     steps=len(X_test)/config['batch_size'],)
 
 print("==========================")
+print(evaluation)
 print("Test Loss:", evaluation[0])
 print("Test Accuracy:", evaluation[1])
 
