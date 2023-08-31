@@ -37,7 +37,7 @@ converter.optimizations = [tf.lite.Optimize.DEFAULT]
 tflite_model = converter.convert()
 
 #writing the tflite model to a file 
-with open('transformer_tf24_s50.tflite', 'wb') as f:
+with open(f'transformer_tf24_s{WINDOW}.tflite', 'wb') as f:
     f.write(tflite_model)
 
 X_test, y_test = process_data(TEST, WINDOW, STRIDE)
