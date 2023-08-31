@@ -3,25 +3,23 @@ from tensorflow.keras.models import load_model
 import numpy as np
 import os
 from transformer import transformer
-from cfg import config
+from cfg import config, WINDOW,STRIDE, DATASET, TEST
 from utils import process_data, F1_Score
 os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
-window_size = 50
-stride = 5
-#model = transformer(length = config['length'],
-#        channels=config['channel'],
-#        num_heads=config['num_heads'],
-#        dropout_rate = config['dropout'],
-#        attn_dim = config['attention_head_dim'],
-#        attention_dropout_rate = config['attention_dropout'],
-#        embed_dim =config['embed_layer_size'],
-#        mlp_dim = config['fc_layer_size'], 
-#        num_layers = config['num_layers'])
+
+model = transformer(length = config['length'],
+       channels=config['channel'],
+       num_heads=config['num_heads'],
+       dropout_rate = config['dropout'],
+       attention_dropout_rate = config['attention_dropout'],
+       embed_dim =config['embed_layer_size'],
+       mlp_dim = config['fc_layer_size'], 
+       num_layers = config['num_layers'])
 
 #load weight
-#weight_path = 'tmp/weights.ckpt'
-#model.load_weights(weight_path)
-model = load_model('tmp/transformer.h5')
+weight_path = f'tmp/weights_{WINDOW}.ckpt'
+model.load_weights(weight_path)
+
 #convert to tflite
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 
@@ -42,12 +40,10 @@ tflite_model = converter.convert()
 with open('transformer_tf24_s50.tflite', 'wb') as f:
     f.write(tflite_model)
 
-
-test_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed/watch_test.csv')
-X_test, y_test = process_data(test_dataset_path, window_size, stride)
+X_test, y_test = process_data(TEST, WINDOW, STRIDE)
 
 #using interpreter to test
-interpreter = tf.lite.Interpreter(model_path="transformer_tf24_s50.tflite")
+interpreter = tf.lite.Interpreter(model_path=f"transformer_tf24_s{WINDOW}.tflite")
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()

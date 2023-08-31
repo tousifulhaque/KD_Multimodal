@@ -27,7 +27,10 @@ INDEX = 0
 # ###############################
 # Hyperparameters
 # ###############################
-
+#Dataset 
+DATASET = 'unimb'
+WINDOW = 50
+STRIDE = 10
 # General
 #BATCH_SIZE = 32
 SEQLENGTH = 100
