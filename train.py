@@ -15,7 +15,7 @@ from tensorflow.keras.metrics import Recall, Precision
 
 
 #local imports
-from cfg import config
+from cfg import config, TRAIN, VALID
 from transformer import transformer
 from utils import process_data , F1_Score, cosine_schedule
 #config
@@ -33,15 +33,14 @@ if __name__ == '__main__':
 
 
     #loading data
-    train_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed/watch_train.csv')
-    val_dataset_path = os.path.join(os.getcwd(), 'new_watch_data_processed/watch_val.csv')
-    window_size = 256
+    dataset = 'unimb'
+    window_size = 50
     stride = 10
 
     #processing train data 
-    X_train, y_train = process_data(train_dataset_path, window_size, stride)
+    X_train, y_train = process_data(TRAIN, window_size, stride)
     #processing val data 
-    X_val , y_val = process_data(val_dataset_path, window_size, stride)
+    X_val , y_val = process_data(VALID, window_size, stride)
 
     model.compile(
         loss= BinaryCrossentropy(label_smoothing=config['label_smoothing']),
@@ -51,7 +50,7 @@ if __name__ == '__main__':
         ),
         metrics=[Recall(), Precision(), F1_Score()],
         )
-    checkpoint_filepath = os.path.join(os.getcwd(),f'tmp/weights_{window_size}.ckpt')
+    checkpoint_filepath = os.path.join(os.getcwd(),f'tmp/weights_{dataset}_{window_size}.ckpt')
     model_checkpoint = ModelCheckpoint(filepath = checkpoint_filepath, 
                                         save_weights_only = True, 
                                         monitor = 'val_loss',

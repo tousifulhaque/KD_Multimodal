@@ -17,9 +17,9 @@ GRAPH = False
 # ###############################
 # data files
 # ###############################
-TRAIN = "dataset/new_watch_data_processed/watch_train.csv" # 
-TEST = "new_watch_data_processed/watch_test.csv" # 
-VALID =  "new_watch_data_processed/watch_val.csv" # optional, if none given test set will be used for validation
+TRAIN = "datasets/UniMb/train_UniMib.csv" # 
+TEST = "datasets/UniMb/test_UniMib.csv" # 
+VALID =  "datasets/UniMb/val_UniMib.csv" # optional, if none given test set will be used for validation
 
 HEADER = 0
 INDEX = 0
@@ -53,7 +53,7 @@ MLP_DIMS = [16, 8] # can be []
 #train config
 config = {
         'epochs': 100,
-        'length':256,
+        'length':50,
         'channel':3,
         'num_layers':  4,
         'embed_layer_size': 128,
