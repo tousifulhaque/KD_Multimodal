@@ -80,6 +80,18 @@ def preprocessing():
     # trials = tf.transpose(trials, perm = [0,2,1])
     print(trials_count)
 
+def read_all_csv(path_list = None):
+    dfs  = []
+    for path in path_list:
+        dfs.append(pd.read_csv(path))
+    return dfs
+
+def merge_dataframe(root_dir, merged_file_name):
+    path_arr = glob.glob(f'{root_dir}{os.path.sep}**csv')
+    df_list = read_all_csv(path_arr)
+    merged_df = pd.concat(df_list, ignore_index=True)
+    merged_df.to_csv(merged_file_name, index = True)
+
 
     # try:
     #      np.savez_compressed("fall_detection_dataset", trials=trials, labels=labels)
@@ -89,4 +101,4 @@ def preprocessing():
     
 
 if __name__ == "__main__":
-    preprocessing()
+    merge_dataframe(root_dir='dataset/UniMb/UniMiB_test', merged_file_name='dataset/UniMb/val_UniMib.csv')
