@@ -7,7 +7,7 @@ from transformer import transformer
 from cfg import config, TEST
 from utils import process_data, F1_Score
 
-window_size = 50
+window_size = 128
 stride = 10
 dataset = 'unimb'
 
