@@ -1,7 +1,7 @@
 #environmental import 
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import BinaryCrossentropy
-from tensorflow.keras.metrics import Recall, Precision
+from tensorflow.keras.metrics import Recall, Precision, Accuracy
 
 from transformer import transformer
 from cfg import config, TEST
@@ -29,7 +29,7 @@ model.compile(
         global_clipnorm=config['global_clipnorm'],
         amsgrad=config['amsgrad'],
     ),
-    metrics= [F1_Score(), Recall(), Precision()],
+    metrics= [F1_Score(), Recall(), Precision(), Accuracy()],
     )
 
 #processing test data
