@@ -21,7 +21,7 @@ model = transformer(length = config['length'],
        num_layers = config['num_layers'])
 
 #load weight
-weight_path =f'tmp/weights_{dataset}_{window_size}.ckpt'
+weight_path =f'tmp/weights_{window_size}.ckpt'
 model.load_weights(weight_path)
 model.compile(
     loss= BinaryCrossentropy(label_smoothing=config['label_smoothing']),
