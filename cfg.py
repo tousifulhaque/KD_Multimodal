@@ -29,7 +29,7 @@ INDEX = 0
 # ###############################
 #Dataset 
 DATASET = 'unimb'
-WINDOW = 50
+WINDOW = 128
 STRIDE = 20
 # General
 #BATCH_SIZE = 32
@@ -56,7 +56,7 @@ MLP_DIMS = [16, 8] # can be []
 #train config
 config = {
         'epochs': 100,
-        'length':50,
+        'length':128,
         'channel':3,
         'num_layers':  4,
         'embed_layer_size': 128,
