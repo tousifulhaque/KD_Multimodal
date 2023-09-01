@@ -17,7 +17,7 @@ model = transformer(length = config['length'],
        num_layers = config['num_layers'])
 
 #load weight
-weight_path = f'tmp/weights_{WINDOW}.ckpt'
+weight_path = f'tmp/weights_{DATASET}_{WINDOW}.ckpt'
 model.load_weights(weight_path)
 
 #convert to tflite
@@ -37,7 +37,7 @@ converter.optimizations = [tf.lite.Optimize.DEFAULT]
 tflite_model = converter.convert()
 
 #writing the tflite model to a file 
-with open(f'transformer_tf24_s{WINDOW}.tflite', 'wb') as f:
+with open(f'transformer_{DATASET}_s{WINDOW}.tflite', 'wb') as f:
     f.write(tflite_model)
 
 X_test, y_test = process_data(TEST, WINDOW, STRIDE)
