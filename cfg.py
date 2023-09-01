@@ -18,7 +18,7 @@ GRAPH = False
 # data files
 # ###############################
 TRAIN = "datasets/UniMb/train_UniMib.csv" # 
-TEST = "datasets/UniMb/test_UniMib.csv" # 
+TEST = "datasets/new_watch_data_processed/watch_test.csv" # 
 VALID =  "datasets/UniMb/val_UniMib.csv" # optional, if none given test set will be used for validation
 
 HEADER = 0
