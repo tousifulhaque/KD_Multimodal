@@ -10,7 +10,7 @@ from tensorflow.keras.initializers import TruncatedNormal
 
 #local package import 
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 
 # function to get sinusoidal positional embedding

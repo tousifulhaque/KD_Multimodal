@@ -17,9 +17,9 @@ GRAPH = False
 # ###############################
 # data files
 # ###############################
-TRAIN = "datasets/UniMb/train_UniMib.csv" # 
-TEST = "datasets/new_watch_data_processed/watch_test.csv" # 
-VALID =  "datasets/UniMb/val_UniMib.csv" # optional, if none given test set will be used for validation
+TRAIN = "datasets/K-Fall/window128/kfall_train_128.npz" # 
+TEST = "datasets/K-Fall/window128/kfall_test_128.npz" # 
+VALID =  "datasets/K-Fall/window128/kfall_val_128.npz" # optional, if none given test set will be used for validation
 
 HEADER = 0
 INDEX = 0
@@ -28,7 +28,7 @@ INDEX = 0
 # Hyperparameters
 # ###############################
 #Dataset 
-DATASET = 'unimb'
+DATASET = 'smartfall'
 WINDOW = 128
 STRIDE = 10
 # General
@@ -55,7 +55,7 @@ MLP_DIMS = [16, 8] # can be []
 
 #train config
 config = {
-        'epochs': 100,
+        'epochs': 20,
         'length':128,
         'channel':3,
         'num_layers':  4,
