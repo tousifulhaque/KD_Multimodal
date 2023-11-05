@@ -45,15 +45,18 @@ if __name__ == '__main__':
         ),
         metrics=[Recall(), Precision(), F1_Score()],
         )
-    checkpoint_filepath = os.path.join(os.getcwd(),f'tmp/weights_{DATASET}_{WINDOW}.ckpt')
+    saved_dir = f'tmp/{DATASET}/{WINDOW}/'
+    checkpoint_filepath = os.path.join(os.getcwd(), saved_dir+"{epoch:02d}_{val_f1_score:.2f}.hdf5")
     model_checkpoint = ModelCheckpoint(filepath = checkpoint_filepath, 
                                         save_weights_only = True, 
                                         monitor = 'val_loss',
                                         mode = 'min', 
                                         save_best_only = True, 
                                         verbose = True)
-    log_dir = "logs/"  # Specify the directory where TensorBoard logs will be saved
-    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+
+    #log_dir = "logs/"  # Specify the directory where TensorBoard logs will be saved
+    model.summary()
+    #tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
     history = model.fit(
         X_train,
         y_train,
@@ -63,8 +66,8 @@ if __name__ == '__main__':
         shuffle = True,
         callbacks=[
             #LearningRateScheduler(cosine_schedule(base_lr=config['learning_rate'], total_steps=config['epochs'], warmup_steps=config['warmup_steps'])),
-            #EarlyStopping(monitor="loss", mode='min', min_delta=0.001, patience=5),
-            model_checkpoint, tensorboard_callback
+            EarlyStopping(monitor="loss", mode='min', min_delta=0.001, patience=5),
+            model_checkpoint
         ],
         verbose=1
         )
