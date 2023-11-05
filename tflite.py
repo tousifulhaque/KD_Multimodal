@@ -43,7 +43,7 @@ with open(f'transformer_{DATASET}_s{WINDOW}.tflite', 'wb') as f:
 X_test, y_test = process_data(TEST, WINDOW, STRIDE)
 
 #using interpreter to test
-interpreter = tf.lite.Interpreter(model_path=f"transformer_tf24_s{WINDOW}.tflite")
+interpreter = tf.lite.Interpreter(model_path=f"transformer_{DATASET}_s{WINDOW}.tflite")
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
