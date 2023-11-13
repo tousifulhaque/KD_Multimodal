@@ -4,7 +4,6 @@ import math
 def cosine_schedule(base_lr, total_steps, warmup_steps ):
     def step_fn(epoch):
         lr = base_lr
-        epoch = 1
 
         progress = (epoch - warmup_steps) / float(total_steps -  warmup_steps)
 
@@ -19,3 +18,7 @@ def cosine_schedule(base_lr, total_steps, warmup_steps ):
     
 
     return step_fn
+
+def linear_scheduler(dim_embed, base_lr, total_steps, warmup_steps):
+    def step_fn(epoch):
+        return dim_embed**(-0.5) * min(total_steps**(-0.5), step * warmup_steps**(-1.5))
