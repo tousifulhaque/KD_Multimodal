@@ -17,9 +17,9 @@ GRAPH = False
 # ###############################
 # data files
 # ###############################
-TRAIN = "datasets/K-Fall/window128/kfall_train_128.npz" # 
-TEST = "datasets/K-Fall/window128/kfall_test_128.npz" # 
-VALID =  "datasets/K-Fall/window128/kfall_val_128.npz" # optional, if none given test set will be used for validation
+TRAIN = "datasets/datasets/K-Fall/window128/kfall_train_128.npz" # 
+TEST = "datasets/datasets/K-Fall/window128/kfall_test_128.npz" # 
+VALID =  "datasets/datasets/K-Fall/window128/kfall_val_128.npz" # optional, if none given test set will be used for validation
 
 HEADER = 0
 INDEX = 0
@@ -28,7 +28,7 @@ INDEX = 0
 # Hyperparameters
 # ###############################
 #Dataset 
-DATASET = 'smartfall'
+DATASET = 'kfall'
 WINDOW = 128
 STRIDE = 10
 # General
@@ -55,16 +55,16 @@ MLP_DIMS = [16, 8] # can be []
 
 #train config
 config = {
-        'epochs': 20,
+        'epochs': 50,
         'length':128,
         'channel':3,
         'num_layers':  4,
-        'embed_layer_size': 128,
+        'embed_layer_size': 64,
         'global_clipnorm' : 3.0,
-        'fc_layer_size': 16,
+        'fc_layer_size': 128,
         'num_heads': 4,
-        'dropout': 0.25,
-        'attention_dropout': 0.25,
+        'dropout': 0.2,
+        'attention_dropout': 0.1,
         'optimizer': 'adam',
         'amsgrad': False,
         'label_smoothing': 0.1,
@@ -72,4 +72,4 @@ config = {
         #'weight_decay': {
         #    'values': [2.5e-4, 1e-4, 5e-5, 1e-5]
         'warmup_steps': 10,
-        'batch_size': 64}
+        'batch_size': 128}
