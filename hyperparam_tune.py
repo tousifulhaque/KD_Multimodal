@@ -44,69 +44,82 @@ def objective(trial):
     embed_dim = trial.suggest_categorical("embed", [8, 16, 32, 64])
     num_heads = trial.suggest_categorical("num_heads", [2, 4, 8])
     fc_layer_size = trial.suggest_categorical("mlp_dim" , [16, 32, 64])
+    batch_size = trial.suggest_categorical("batch_size", [16,32, 64,128])
     optimizer = create_optimizer(trial=trial)
+    window = trial.suggest_categorical("window", [128, 256, 64])
+    stride = trial.suggest_categorical("stride", [8, 16 , 32, 64])
 
-    model = transformer(length=WINDOW,
+
+
+
+    #processing train data
+    data, labels = process_data(TRAIN, window, stride)
+    X_train, y_train = data, labels.astype(np.int64)
+    neg, pos = np.bincount(y_train)
+    total = y_train.shape[0]
+    weight_for_0 = (1 / neg) * (total / 2.0)
+    weight_for_1 = (1 / pos) * (total / 2.0)
+    class_weight = {0: weight_for_0, 1: weight_for_1}
+    initial_bias = np.log([pos/neg])
+    # train_file = np.load(TRAIN)
+    # X_train , y_train = train_file['data'], train_file['labels']
+
+    #processing val data 
+    X_val , y_val = process_data(VALID, window, stride)
+    X_val, y_val = X_val, y_val.astype(np.int64)
+    #val_file = np.load(VALID)
+    # X_val, y_val = val_file['data'], val_file['labels']
+    model = transformer(length=window,
         channels=config['channel'],
         num_heads=num_heads,
         dropout_rate = dropout_rate,
         attention_dropout_rate = attention_dropout,
         embed_dim = embed_dim,
         mlp_dim = fc_layer_size,
-        num_layers = num_layers)
-
-
-    #processing train data
-    #X_train, y_train = process_data(TRAIN, WINDOW, STRIDE)
-    train_file = np.load(TRAIN)
-    X_train , y_train = train_file['data'], train_file['labels']
-
-    #processing val data 
-    #X_val , y_val = process_data(VALID, WINDOW, STRIDE)
-    val_file = np.load(VALID)
-    X_val, y_val = val_file['data'], val_file['labels']
-
+        num_layers = num_layers, 
+        output_bias=initial_bias)
     model.compile(
-        loss= BinaryCrossentropy(),
-        optimizer=optimizer,
-        metrics=[F1_Score(), Recall(), Precision()],
-        )
-    
-    saved_dir = f'tmp/{DATASET}_{WINDOW}/'
-    if not os.path.exists(saved_dir):
-        os.mkdir(saved_dir)
+    loss= BinaryCrossentropy(),
+    optimizer=optimizer,
+    metrics=[F1_Score(), Recall(), Precision()],
+    )
 
-    checkpoint_filepath = os.path.join(os.getcwd(), saved_dir+"{epoch:02d}_{val_f1_score:.2f}.hdf5")
-    model_checkpoint = ModelCheckpoint(filepath = checkpoint_filepath, 
-                                        save_weights_only = True, 
-                                        monitor = 'val_loss',
-                                        mode = 'min', 
-                                        save_best_only = True, 
-                                        verbose = True)
+    # saved_dir = f'tmp/{DATASET}_{WINDOW}/'
+    # if not os.path.exists(saved_dir):
+    # os.mkdir(saved_dir)
+
+    # checkpoint_filepath = os.path.join(os.getcwd(), saved_dir+"{epoch:02d}_{val_f1_score:.2f}.hdf5")
+    # model_checkpoint = ModelCheckpoint(filepath = checkpoint_filepath, 
+    #                                 save_weights_only = True, 
+    #                                 monitor = 'val_loss',
+    #                                 mode = 'min', 
+    #                                 save_best_only = True, 
+    #                                 verbose = True)
     #log_dir = "logs/"  # Specify the directory where TensorBoard logs will be saved
     model.summary()
     #tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
     model.fit(
-        X_train,
-        y_train,
-        batch_size=128,
-        epochs=1,
-        validation_data=(X_val, y_val),
-        shuffle = True,
-        callbacks=[
-            #LearningRateScheduler(cosine_schedule(base_lr=config['learning_rate'], total_steps=config['epochs'], warmup_steps=config['warmup_steps'])),
-            EarlyStopping(monitor="val_loss", mode='min', min_delta=0.001, patience=5),
-            model_checkpoint
-        ],
-        verbose=1
-        )
-    
+    X_train,
+    y_train,
+    batch_size=batch_size,
+    epochs=50,
+    validation_data=(X_val, y_val),
+    shuffle = True,
+    callbacks=[
+        #LearningRateScheduler(cosine_schedule(base_lr=config['learning_rate'], total_steps=config['epochs'], warmup_steps=config['warmup_steps'])),
+        EarlyStopping(monitor="val_loss", mode='min', min_delta=0.001, patience=5, restore_best_weights=True),
+        #model_checkpoint
+    ],
+    verbose=1, 
+    class_weight = class_weight
+    )
+
     score = model.evaluate(X_val, y_val,verbose = 0)
     return score[0]
 
 if __name__ == "__main__":
     study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials = 2, timeout = 120)
+    study.optimize(objective, n_trials = 200, timeout = 120)
     print("Number of finished trials: {}".format(len(study.trials)))
 
     print("Best trial:")
