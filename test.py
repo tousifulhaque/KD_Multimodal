@@ -3,8 +3,8 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.metrics import Recall, Precision, Accuracy
 
-from transformer import transformer
-from cfg import config, TEST
+from model.transformer import transformer
+from cfg import config, TEST, TRAIN, VALID
 from utils import process_data, F1_Score
 
 window_size = 128

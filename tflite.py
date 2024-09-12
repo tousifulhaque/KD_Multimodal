@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 import numpy as np
 import os
-from transformer import transformer
+from model.transformer import transformer
 from cfg import config, WINDOW,STRIDE, DATASET, TEST
 from utils import process_data, F1_Score
 os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
