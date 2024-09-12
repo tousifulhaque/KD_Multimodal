@@ -35,15 +35,17 @@ model.compile(
 #processing test data
 X_test, y_test = process_data(TEST,window_size,stride)
 
-#evaluating model 
+#evaluating model
+start_time = time.time()
 evaluation = model.evaluate(x=X_test,
     y=y_test,
     batch_size=config['batch_size'],
     verbose='auto',
     steps=len(X_test)/config['batch_size'],)
-
-print("==========================")
-print(evaluation)
-print("Test Loss:", evaluation[0])
-print("Test Accuracy:", evaluation[1])
+end_time = time.time()
+print(end_time - start_time)
+#print("==========================")
+#print(evaluation)
+#print("Test Loss:", evaluation[0])
+#print("Test Accuracy:", evaluation[1])
 

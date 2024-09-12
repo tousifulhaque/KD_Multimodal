@@ -16,11 +16,13 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import layers
 from tensorflow import keras
 import tensorflow as tf
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam, SGD
 from tensorflow.keras.callbacks import LearningRateScheduler, Callback, ModelCheckpoint
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.layers import Add, Dense, LayerNormalization,GlobalAveragePooling1D
 from tensorflow.keras.metrics import Recall, Precision
+import matplotlib.pyplot as plt
+#from sklearn.metrics import f1_score
 
 
 #local imports
@@ -28,6 +30,12 @@ from tensorflow.keras.metrics import Recall, Precision
 from utils.processing import process_data
 from utils.imports import import_class
 #config
+def distribution_viz( labels, work_dir, mode):
+    values, count = np.unique(labels, return_counts = True)
+    plt.bar(x = values,data = count, height = count)
+    plt.xlabel('Labels')
+    plt.ylabel('Count')
+    plt.savefig( work_dir + '/' + '{} Label Distribution'.format(mode))
 
 def get_parser() -> ArgumentParser:
     '''
