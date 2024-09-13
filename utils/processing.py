@@ -176,7 +176,19 @@ def process_data(directory : str, train_subjects : str, val_subjects : List[int]
 
     
 if __name__ == "__main__" :
-    args = get_arg()
-    file_paths = glob.glob(f'{args.source}/**/{args.data_type}/{args.types}/**')
-    print(file_paths)
-    move_all(file_paths, args.dest)
+    directory  = '/Users/tousif/Lstm_transformer/KD_Multimodal/datasets/smartfallmm/student_participants/accelerometer/watch_accelerometer'
+    train_subjects = [29,31,32,36,37,40, 41, 42, 43,44,45,46]
+    val_subjects = [34]
+    window = 256
+    stride = 10
+
+    dataset = splited_dataset = process_data(directory, train_subjects, val_subjects, window, stride)
+    X_train, y_train = dataset['train']
+    print(X_train.shape)
+    X_val, y_val = dataset['val']
+    print(X_val.shape)
+    X_test, y_test = dataset['test']
+    print(X_test.shape)
+    np.savez(os.path.join(os.getcwd(), 'datasets/smartfallmm/sm_train_256.npz'), data= X_train, label = y_train)
+    np.savez(os.path.join(os.getcwd(),'datasets/smartfallmm/sm_val_256.npz'), data= X_val, label = y_val)
+    np.savez(os.path.join(os.getcwd(), 'datasets/smartfallmm/sm_test_256.npz'), data= X_test, label = y_test)

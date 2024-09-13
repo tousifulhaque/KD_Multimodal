@@ -102,7 +102,7 @@ if __name__ == '__main__':
         metrics=[Recall(), Precision()],
         )
     checkpoint_filepath = os.path.join(os.getcwd(),
-                                       f'{arg.experiment_dir}/model/{arg.dataset}_{arg.dataset_args["window"]}')
+                                       f'{arg.experiment_dir}/model/{arg.dataset}_{arg.dataset_args["window"]}.h5')
     model_checkpoint = ModelCheckpoint(filepath = checkpoint_filepath, 
                                         save_weights_only = False, 
                                         monitor = 'val_loss',

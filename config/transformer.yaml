@@ -17,8 +17,8 @@ hyperparameters:
 
 dataset_args: 
   directory : datasets/smartfallmm/student_participants/accelerometer/watch_accelerometer
-  train_subjects: [29,31,32,34,35,36,37,40]
-  val_subjects: [41]
+  train_subjects: [29,31,32,34,35,36,37,40, 41, 42, 43, 44]
+  val_subjects: [45]
   window: 128
   stride: 10
 
