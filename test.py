@@ -1,24 +1,28 @@
 #environmental import 
+import sys
+import os
+import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.metrics import Recall, Precision, Accuracy
-import time
-from transformer import transformer
-from cfg import config, TEST
-from utils import process_data, F1_Score
+
+# from model.transformer import transformer
+# from utils import process_data, F1_Score
 
 window_size = 128
 stride = 10
 dataset = 'unimb'
 
-model = transformer(length = config['length'],
-       channels=config['channel'],
-       num_heads=config['num_heads'],
-       dropout_rate = config['dropout'],
-       attention_dropout_rate = config['attention_dropout'],
-       embed_dim =config['embed_layer_size'],
-       mlp_dim = config['fc_layer_size'], 
-       num_layers = config['num_layers'])
+model = tf.keras.models.load_model(os.path.join(os.getcwd(), 'experiments/new_run/model/smartfallmm_128.h5'))
+model.summary()
+# model = transformer(length = config['length'],
+#        channels=config['channel'],
+#        num_heads=config['num_heads'],
+#        dropout_rate = config['dropout'],
+#        attention_dropout_rate = config['attention_dropout'],
+#        embed_dim =config['embed_layer_size'],
+#        mlp_dim = config['fc_layer_size'], 
+#        num_layers = config['num_layers'])
 
 #load weight
 weight_path =f'tmp/weights_{window_size}.ckpt'
