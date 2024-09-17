@@ -9,5 +9,5 @@ if  __name__ == "__main__":
     splited_dataset = process_data(**arg.dataset_args)
     X_test, y_test = splited_dataset['val']
 
-    model = tf.keras.models.load_model('experiments/smallrun128_best/model/transformer_recall-0.77_precision-0.89.h5')
+    model = tf.keras.models.load_model('experiments/smallrun256(conformer)_best/model/transformer_recall-0.89_precision-0.73.h5')
     model.evaluate(x = X_test, y = y_test )
