@@ -16,13 +16,12 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras import layers
 from tensorflow import keras
 import tensorflow as tf
-from tensorflow.keras.optimizers import Adam, SGD, AdamW
+from tensorflow.keras.optimizers import Adam, SGD
 from tensorflow.keras.callbacks import LearningRateScheduler, Callback, ModelCheckpoint
 from tensorflow.keras.losses import BinaryCrossentropy
 from tensorflow.keras.layers import Add, Dense, LayerNormalization,GlobalAveragePooling1D
-from tensorflow.keras.metrics import Recall, Precision
+from tensorflow.keras.metrics import Recall, Precision, F1Score
 import matplotlib.pyplot as plt
-from sklearn.utils.class_weight import compute_sample_weight
 #from sklearn.metrics import f1_score
 
 
@@ -55,9 +54,7 @@ def get_parser() -> ArgumentParser:
     return parser
 
 
-
-#creating model
-if __name__ == '__main__':
+def compile_arguments():
     arg_parser = get_parser()
     p = arg_parser.parse_args()
     if p.config is not None: 
@@ -71,9 +68,12 @@ if __name__ == '__main__':
             if k not in key:
                     raise ValueError(f'Argument {k} is out of scope')
         arg_parser.set_defaults(**default_arg)
-    
     arg = arg_parser.parse_args()
-    
+    return arg
+#creating model
+if __name__ == '__main__':
+    arg = compile_arguments()
+
     if not os.path.exists(arg.experiment_dir):
          os.makedirs(arg.experiment_dir)
          shutil.copy(arg.config, arg.experiment_dir)
@@ -100,18 +100,20 @@ if __name__ == '__main__':
         optimizer=Adam(
             **arg.optimizer_args
         ),
-        metrics=[Recall(), Precision()],
+        metrics=[Recall(thresholds = 0.5), Precision(thresholds = 0.5), F1Score(threshold= 0.5, average = 'micro')],
         )
-    checkpoint_filepath = os.path.join(os.getcwd(),
-                                       f'{arg.experiment_dir}/model/{arg.dataset}_{arg.dataset_args["window"]}.h5')
-    model_checkpoint = ModelCheckpoint(filepath = checkpoint_filepath, 
+    # checkpoint_filepath = os.path.join(os.getcwd(),
+    #                                    f'{arg.experiment_dir}/model/{arg.dataset}_{arg.dataset_args["window"]}.h5')
+    model_checkpoint = ModelCheckpoint(filepath = os.path.join(
+                                       f'{arg.experiment_dir}/model/',
+                                       'transformer_recall-{val_recall:0.2f}_precision-{val_precision:0.2f}.h5'), 
                                         save_weights_only = False, 
-                                        monitor = 'val_loss',
-                                        mode = 'min', 
+                                        monitor = 'val_f1_score',
+                                        mode = 'max', 
                                         save_best_only = True, 
                                         verbose = True)
-    # log_dir = "logs/"  # Specify the directory where TensorBoard logs will be saved
-    # tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+    log_dir = f"{arg.experiment_dir}/logs"  # Specify the directory where TensorBoard logs will be saved
+    tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
     history = model.fit(
         X_train,
         y_train,
@@ -119,9 +121,10 @@ if __name__ == '__main__':
         validation_data=(X_val, y_val),
         shuffle = True,
         callbacks=[
-            #LearningRateScheduler(cosine_schedule(base_lr=config['learning_rate'], total_steps=config['epochs'], warmup_steps=config['warmup_steps'])),
-            #EarlyStopping(monitor="loss", mode='min', min_delta=0.001, patience=5),
+            tensorboard_callback,
             model_checkpoint
         ],
         verbose=1
         )
+    
+    ##### test ########

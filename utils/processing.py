@@ -120,7 +120,7 @@ def segment_dataset(sequence_data : np.ndarray, sequence_labels: np.ndarray,
     labels = np.concatenate(sequence_labels, axis = 0)
     assert dataset.shape[0] == labels.shape[0]
     segmented_dataset, segmented_labels= sliding_window(dataset, labels, window - 1,dataset.shape[0],window,stride)
-    return segmented_dataset.astype(np.float32), segmented_labels.astype(np.float32)
+    return segmented_dataset.astype(np.float64), segmented_labels.astype(np.float64)
 
 
 def process_data(directory : str, train_subjects : str, val_subjects : List[int], 

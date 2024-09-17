@@ -1,32 +1,32 @@
 model_path: model.transformer.transformer
 dataset: smartfallmm
 model_args: 
-  length : 128
+  length : 256
   channels: 3
   num_heads: 4
   num_layers: 4
-  embed_dim: 128
-  dropout_rate: 0.25
-  attention_dropout_rate: 0.25
-  mlp_dim: 16
+  embed_dim: 16
+  dropout_rate: 0.1
+  attention_dropout_rate: 0.1
+  mlp_dim: 32
 
 
 hyperparameters:
-  batch_size: 64
-  epochs: 120
+  batch_size: 256
+  epochs: 30
 
 dataset_args: 
   directory : datasets/smartfallmm/student_participants/accelerometer/watch_accelerometer
-  train_subjects: [29,31,32,34,35,36,37,40, 41, 42, 43, 44]
-  val_subjects: [45]
-  window: 128
+  train_subjects: [29,31,32,36,37,40, 41, 42, 43,44,45,46]
+  val_subjects: [34]
+  window: 256
   stride: 10
 
 optimizer_args: 
-  global_clipnorm: 3.0
-  amsgrad: 
+  # global_clipnorm: 3.0
+  learning_rate: 0.001
 
-experiment_dir: 'experiments/new_run/'
+experiment_dir: 'experiments/smallrun256_best/'
 
 
 
