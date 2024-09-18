@@ -106,7 +106,7 @@ if __name__ == '__main__':
     #                                    f'{arg.experiment_dir}/model/{arg.dataset}_{arg.dataset_args["window"]}.h5')
     model_checkpoint = ModelCheckpoint(filepath = os.path.join(
                                        f'{arg.experiment_dir}/model/',
-                                       'transformer_recall-{val_recall:0.2f}_precision-{val_precision:0.2f}.h5'), 
+                                       'model_recall-{val_recall:0.2f}_precision-{val_precision:0.2f}.h5'), 
                                         save_weights_only = False, 
                                         monitor = 'val_f1_score',
                                         mode = 'max', 

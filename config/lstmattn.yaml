@@ -1,0 +1,23 @@
+model_path: model.lstmattn.lstm_attn
+dataset: smartfallmm
+model_args: 
+  n_timesteps: 128
+  n_features: 3
+  n_outputs: 1
+
+hyperparameters:
+  batch_size: 64
+  epochs: 10
+
+dataset_args: 
+  directory : datasets/smartfallmm/student_participants/accelerometer/watch_accelerometer
+  train_subjects: [29,31,32,36,37,40, 41, 42, 43,44,45,46]
+  val_subjects: [34]
+  window: 128
+  stride: 10
+
+optimizer_args: 
+  # global_clipnorm: 3.0
+  learning_rate: 0.001
+
+experiment_dir: 'experiments/small(lstmattn)128_best/'

@@ -7,7 +7,8 @@ from train import compile_arguments
 if  __name__ == "__main__":
     arg = compile_arguments()
     splited_dataset = process_data(**arg.dataset_args)
-    X_test, y_test = splited_dataset['val']
+    X_test, y_test = splited_dataset['test']
 
-    model = tf.keras.models.load_model('experiments/smallrun256(conformer)_best/model/transformer_recall-0.89_precision-0.73.h5')
+    model = tf.keras.models.load_model('experiments/small(lstmattn)128_best/model/model_recall-0.73_precision-0.81.h5')
+    model.summary()
     model.evaluate(x = X_test, y = y_test )

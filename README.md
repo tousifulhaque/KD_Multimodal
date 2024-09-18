@@ -53,20 +53,3 @@ export CPATH=$CUDNN_HOME/include:$CPATH
 export LIBRARY_PATH=$CUDNN_HOME/lib64:$LIBRARY_PATH
 source ~/.bashrc
 ```
-
-### Change in Code
-Remove Normalization from the line below 
-```python
-from tensorflow.keras.layers import Add, Dense, LayerNormalization,Normalization,Masking, GlobalAveragePooling1D, Conv1D, Dropout, MultiHeadAttention, Layer
-```
-Add a new line 
-
-```python 
-from tensorflow.keras.layers.experimental.preprocessing import Normalization
-```
-
-Remove the keyword argument batch_size from the line below
-
-```python
-model.input_norm.adapt(X_train, batch_size=config['batch_size'])
-
